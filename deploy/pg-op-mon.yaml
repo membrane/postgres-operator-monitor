@@ -18,7 +18,7 @@ metadata:
   name: pg-op-mon-$INST
   namespace: pg-op-mon
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor"
     predic8.de/scm-path: "/deploy/pg-op-mon-new.yaml"
 spec:
   replicas: 1
