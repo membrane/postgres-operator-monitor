@@ -19,7 +19,7 @@ metadata:
   namespace: pg-op-mon
   annotations:
     predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor"
-    predic8.de/scm-path: "/deploy/pg-op-mon-new.yaml"
+    predic8.de/scm-path: "/deploy/pg-op-mon.yaml"
 spec:
   replicas: 1
   selector:
