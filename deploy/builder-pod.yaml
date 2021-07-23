@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: buildah
+      image: hub.predic8.de/p8/buildah:2
+      command:
+        - cat
+      tty: true
+    - name: kubectl
+      image: hub.predic8.de/p8/kubectl:8
+      command:
+        - cat
+      tty: true
+  imagePullSecrets:
+    - name: p8-hub-credentials

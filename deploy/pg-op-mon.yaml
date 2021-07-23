@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-op-mon-$INST
+  namespace: pg-op-mon
+spec:
+  selector:
+    app: pg-op-mon-$INST
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-op-mon-$INST
+  namespace: pg-op-mon
+  annotations:
+    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon"
+    predic8.de/scm-path: "/deploy/pg-op-mon-new.yaml"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pg-op-mon-$INST
+  template:
+    metadata:
+      labels:
+        app: pg-op-mon-$INST
+    spec:
+      containers:
+        - name: pg-op-mon
+          image: hub.predic8.de/p8/pg-op-mon:$BUILD_NUMBER
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 5
+          env:
+#            - name: DATABASE_URL
+#              value: "jdbc:postgresql://pg-op-mon-$INST-db.pg-op-mon.svc.cluster.local:5432/pg-op-mon"
+#            - name: PGUSER
+#              valueFrom:
+#                secretKeyRef:
+#                  key: username
+#                  name: pg-op-mon.pg-op-mon-$INST-db.credentials
+#            - name: PGPASSWORD
+#              valueFrom:
+#                secretKeyRef:
+#                  key: password
+#                  name: pg-op-mon.pg-op-mon-$INST-db.credentials
+            - name: CATALINA_OPTS
+              value: "-XX:MaxHeapSize=1073741824"
+            - name: TZ
+              value: "Europe/Berlin"
+#            - name: YT_TOKEN
+#              valueFrom:
+#                secretKeyRef:
+#                  name: pg-op-mon-youtrack-token
+#                  key: token
+          resources:
+            requests:
+              memory: "1Gi"
+            limits:
+              memory: "2Gi"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: p8-hub-credentials

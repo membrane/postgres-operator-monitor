@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: Postgres Operator Monitoring
+  output:
+    ansi:
+      enabled: ALWAYS
+  cloud:
+    kubernetes:
+      client:
+        master-url: https://kubernetes.default.svc
+        namespace: default
+
+kubernetes:
+  master: ${spring.cloud.kubernetes.client.master-url}
+  client:
+    namespace: ${spring.cloud.kubernetes.client.namespace}
+#    logHttp: true
+
+management:
+  security:
+    enabled: false

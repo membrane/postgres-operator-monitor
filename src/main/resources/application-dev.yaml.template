@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    kubernetes:
+      client:
+        master-url: FILL-IN
+        namespace: FILL-IN
+        ca-cert-file: FILL-IN
+        client-cert-file: FILL-IN
+        client-key-file: FILL-IN
+
+kubernetes:
+  master: ${spring.cloud.kubernetes.client.master-url}
+  client:
+    namespace: ${spring.cloud.kubernetes.client.namespace}
