@@ -3,7 +3,7 @@ kind: Pod
 spec:
   containers:
     - name: buildah
-      image: hub.predic8.de/p8/buildah:2
+      image: hub.predic8.de/p8/buildah:259
       command:
         - cat
       tty: true
