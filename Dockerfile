@@ -10,7 +10,7 @@ ADD . /app/
 RUN mvn package -DskipTests
 
 
-FROM openjdk:16.0.2
+FROM registry-1.docker.io/library/openjdk:16.0.2
 MAINTAINER Valentin Brückel <brueckel@predic8.de>
 
 COPY --from=0 /app/target/*.jar /app/foo.jar
