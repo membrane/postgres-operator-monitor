@@ -1,4 +1,4 @@
-FROM maven:3.8.1-jdk-11
+FROM registry-1.docker.io/library/maven:3.8.1-jdk-11
 
 ENV HOME=/root
 ADD settings.xml /root/.m2/
@@ -15,4 +15,4 @@ MAINTAINER Valentin Brückel <brueckel@predic8.de>
 
 COPY --from=0 /app/target/*.jar /app/foo.jar
 
-CMD [ "/opt/jdk/bin/java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "/app/foo.jar" ]
+CMD [ "/usr/bin/java", "-jar", "/app/foo.jar" ]
