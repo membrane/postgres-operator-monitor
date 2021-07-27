@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pg-op-mon-$INST
-  namespace: pg-op-mon
+  name: pg-op-mon
+  namespace: monitoring
 spec:
   selector:
-    app: pg-op-mon-$INST
+    app: pg-op-mon
   ports:
     - name: http
       port: 80
@@ -15,8 +15,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pg-op-mon-$INST
-  namespace: pg-op-mon
+  name: pg-op-mon
+  namespace: monitoring
   annotations:
     predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor"
     predic8.de/scm-path: "/deploy/pg-op-mon.yaml"
@@ -24,11 +24,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pg-op-mon-$INST
+      app: pg-op-mon
   template:
     metadata:
       labels:
-        app: pg-op-mon-$INST
+        app: pg-op-mon
     spec:
       containers:
         - name: pg-op-mon
@@ -51,27 +51,8 @@ spec:
             initialDelaySeconds: 1
             timeoutSeconds: 5
           env:
-#            - name: DATABASE_URL
-#              value: "jdbc:postgresql://pg-op-mon-$INST-db.pg-op-mon.svc.cluster.local:5432/pg-op-mon"
-#            - name: PGUSER
-#              valueFrom:
-#                secretKeyRef:
-#                  key: username
-#                  name: pg-op-mon.pg-op-mon-$INST-db.credentials
-#            - name: PGPASSWORD
-#              valueFrom:
-#                secretKeyRef:
-#                  key: password
-#                  name: pg-op-mon.pg-op-mon-$INST-db.credentials
-            - name: CATALINA_OPTS
-              value: "-XX:MaxHeapSize=1073741824"
             - name: TZ
               value: "Europe/Berlin"
-#            - name: YT_TOKEN
-#              valueFrom:
-#                secretKeyRef:
-#                  name: pg-op-mon-youtrack-token
-#                  key: token
           resources:
             requests:
               memory: "1Gi"

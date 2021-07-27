@@ -1,4 +1,4 @@
-FROM maven:3.5.4-jdk-8-alpine
+FROM maven:3.8.1-jdk-11
 
 ENV HOME=/root
 ADD settings.xml /root/.m2/
@@ -10,7 +10,7 @@ ADD . /app/
 RUN mvn package -DskipTests
 
 
-FROM hub.predic8.de/p8/java10:1
+FROM openjdk:16.0.2
 MAINTAINER Valentin Brückel <brueckel@predic8.de>
 
 COPY --from=0 /app/target/*.jar /app/foo.jar

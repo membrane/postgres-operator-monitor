@@ -12,5 +12,6 @@ spec:
       command:
         - cat
       tty: true
+
   imagePullSecrets:
     - name: p8-hub-credentials
