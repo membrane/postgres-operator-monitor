@@ -5,7 +5,7 @@ ADD settings.xml /root/.m2/
 
 ADD pom.xml /app/
 WORKDIR /app/
-RUN mvn dependency:go-offline -B
+RUN mvn dependency:go-offline -B -Dmaven.artifact.threads=8
 ADD . /app/
 RUN mvn package -DskipTests
 
