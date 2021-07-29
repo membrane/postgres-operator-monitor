@@ -2,6 +2,9 @@
 
 Collects Prometheus-compatible metrics from [Postgres Operator](https://github.com/zalando/postgres-operator)
 
+## Deployment
+
+
 ## Prometheus Config
 ```
       - job_name: 'pg-op-mon'
