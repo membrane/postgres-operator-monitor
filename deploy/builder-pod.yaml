@@ -7,11 +7,20 @@ spec:
       command:
         - cat
       tty: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: container-data
+        - mountPath: /home/build/.local/share/containers
+          name: private-container-data
     - name: kubectl
       image: hub.predic8.de/p8/kubectl:8
       command:
         - cat
       tty: true
-
   imagePullSecrets:
     - name: p8-hub-credentials
+  volumes:
+    - name: container-data
+      emptyDir: {}
+    - name: private-container-data
+      emptyDir: {}
