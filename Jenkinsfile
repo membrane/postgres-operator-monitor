@@ -48,7 +48,7 @@ pipeline {
                         p8.kubectl.prepareCredentials()
                         p8.kubectl.applyV2()
                     }
-                    sh 'kubectl $KUBECTL_OPTS -n pg-op-mon rollout status deployment pg-op-mon'
+                    sh 'kubectl $KUBECTL_OPTS -n monitoring rollout status deployment pg-op-mon'
                 }
             }
         }
