@@ -4,6 +4,20 @@ Collects Prometheus-compatible metrics from [Postgres Operator](https://github.c
 
 ## Deployment
 
+Create Namespace if not already present
+```bash
+kubectl apply -f kubernetes/namespace.yaml
+```
+
+Create Roles
+```bash
+kubectl apply -f kubernetes/roles.yaml
+```
+
+Create the actual deployment
+```bash
+kubectl apply -f kubernetes/template.yaml
+```
 
 ## Prometheus Config
 ```
