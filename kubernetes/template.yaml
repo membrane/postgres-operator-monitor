@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: pg-op-mon
-          image: predic8/postgres-operator/monitor:1
+          image: predic8/postgres-operator-monitor:1
           ports:
             - containerPort: 8080
               protocol: TCP
