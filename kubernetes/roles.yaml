@@ -1,5 +1,5 @@
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
     predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
@@ -13,7 +13,7 @@ rules:
 
 ---
 
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   annotations:
@@ -33,7 +33,7 @@ roleRef:
 ---
 
 kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
     predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
@@ -53,7 +53,7 @@ rules:
 ---
 
 kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   annotations:
     predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
