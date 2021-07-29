@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: pg-op-mon
   namespace: monitoring
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: pg-op-mon
   namespace: monitoring
@@ -32,7 +32,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: pg-op-mon
   namespace: monitoring
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: pg-op-mon
-          image: hub.predic8.de/p8/pg-op-mon:$BUILD_NUMBER
+          image: predic8/postgres-operator/monitor:1
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -73,6 +73,5 @@ spec:
             limits:
               memory: "2Gi"
       serviceAccountName: pg-op-mon
-      imagePullSecrets:
-        - name: p8-hub-credentials
-
+#      imagePullSecrets:
+#        - name: p8-hub-credentials

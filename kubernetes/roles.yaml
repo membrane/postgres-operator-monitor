@@ -2,7 +2,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   namespace: monitoring
   name: pg-op-mon
@@ -17,7 +17,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: pg-op-mon
   namespace: monitoring
@@ -36,7 +36,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: monitoring-pg-op-mon
 rules:
@@ -56,7 +56,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   annotations:
-    predic8.de/scm: "https://gitea.predic8.de/P8/pg-op-mon.git"
+    predic8.de/scm: "https://github.com/membrane/postgres-operator-monitor.git"
     predic8.de/scm-path: "kubernetes/template.yaml"
   name: monitoring-pg-op-mon-binding
 subjects:
@@ -66,4 +66,3 @@ roleRef:
   kind: ClusterRole
   name: monitoring-pg-op-mon
   apiGroup: rbac.authorization.k8s.io
-
