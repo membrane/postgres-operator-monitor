@@ -1,11 +1,11 @@
 package de.predic8.pgopmon.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.predic8.pgopmon.crd.Postgresql;
-import de.predic8.pgopmon.crd.PostgresqlOps;
 import de.predic8.kubernetesclient.client.NamespacedApiClient;
 import de.predic8.kubernetesclient.genericapi.ARList;
 import de.predic8.kubernetesclient.genericapi.ArbitraryResourceApi;
+import de.predic8.pgopmon.crd.Postgresql;
+import de.predic8.pgopmon.crd.PostgresqlOps;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.JSON;
@@ -15,6 +15,7 @@ import io.kubernetes.client.openapi.models.V1PodList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 @Component
+@DependsOn("kubernetesClient")
 public class Watcher implements Runnable {
 
 	Logger logger = LoggerFactory.getLogger(Watcher.class);
