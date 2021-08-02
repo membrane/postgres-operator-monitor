@@ -229,6 +229,7 @@ public class StatusRetrieverService implements Runnable {
                 return null;
             }
 
+            LOG.info(body.string());
             return new Status(om.valueToTree(body.string()));
 
         } catch (Exception e) {
