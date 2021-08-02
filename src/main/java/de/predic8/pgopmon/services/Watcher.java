@@ -60,7 +60,9 @@ public class Watcher implements Runnable {
 
 			cdl.countDown();
 
+			//noinspection InfiniteLoopStatement
 			while(true)
+				//noinspection BusyWait
 				Thread.sleep(1000000);
 
 		} catch (Exception e){
@@ -73,6 +75,7 @@ public class Watcher implements Runnable {
 		try {
 			V1PodList pods = api.listPodForAllNamespaces(null, null, null, "app=spilo", null, null, null, null, null);
 			worker.resetPods(pods.getItems());
+			logger.info("Monitoring {} pods", pods.getItems().size());
 
 			ArbitraryResourceApi<V1Pod> api2 = new ArbitraryResourceApi<>(apiClient, slowApiClient, null, "v1", "pods");
 			api2.watchAsync(null, requireNonNull(pods.getMetadata()).getResourceVersion(), V1Pod.class, null, "app=spilo", getPodWatcher());
@@ -87,7 +90,7 @@ public class Watcher implements Runnable {
 			ARList<Postgresql> list = op.list();
 			worker.resetPostgresqls(convertToPostgresqlList(list));
 
-			logger.info("Start monitoring the Postgresqls...");
+			logger.info("Start monitoring {} Postgresqls...", list.getItems().size());
 			op.watch(list.getMetadata().getResourceVersion(), getPostgresqlWatcher());
 
 		} catch (Exception e) {
