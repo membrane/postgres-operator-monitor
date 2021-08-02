@@ -222,6 +222,7 @@ public class StatusRetrieverService implements Runnable {
                 return null;
             }
 
+            LOG.info(res.toString());
             ResponseBody body = res.body();
             if (body == null || body.contentLength() == 0) {
                 LOG.info("while retrieving " + ip + " no body was returned.");
