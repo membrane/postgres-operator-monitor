@@ -10,9 +10,9 @@ ADD . /app/
 RUN mvn package -DskipTests
 
 
-FROM registry-1.docker.io/library/openjdk:16.0.2
-#FROM registry-1.docker.io/library/ubuntu
-#RUN apt-get update && apt-get install -y openjdk-16-jre-headless
+#FROM registry-1.docker.io/library/openjdk:16.0.2
+FROM registry-1.docker.io/library/ubuntu
+RUN apt-get update && apt-get install -y openjdk-16-jre-headless
 
 COPY --from=0 /app/target/*.jar /app/foo.jar
 
