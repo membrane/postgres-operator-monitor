@@ -222,15 +222,15 @@ public class StatusRetrieverService implements Runnable {
                 return null;
             }
 
-            LOG.info(res.toString());
+//            LOG.info(res.toString());
             ResponseBody body = res.body();
             if (body == null || body.contentLength() == 0) {
                 LOG.info("while retrieving " + ip + " no body was returned.");
                 return null;
             }
 
-            LOG.info(body.string());
-            return new Status(om.valueToTree(body.string()));
+//            LOG.info(body.string());
+            return new Status(om.readTree(body.string()));
 
         } catch (Exception e) {
             LOG.info("while retrieving " + ip, e);
