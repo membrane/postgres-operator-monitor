@@ -6,17 +6,16 @@ import de.predic8.pgopmon.entities.DBIKey;
 import de.predic8.pgopmon.entities.DBIVKey;
 import de.predic8.pgopmon.entities.DBKey;
 import de.predic8.pgopmon.entities.PostgresInfo;
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 @Service
@@ -130,6 +129,7 @@ public class StatusRetrieverService implements Runnable {
             }
 
             try {
+                //noinspection BusyWait
                 Thread.sleep(60000);
             } catch (InterruptedException ignored) {
             }
@@ -222,12 +222,13 @@ public class StatusRetrieverService implements Runnable {
                 return null;
             }
 
-            if (res.body() == null) {
+            ResponseBody body = res.body();
+            if (body == null || body.contentLength() == 0) {
                 LOG.info("while retrieving " + ip + " no body was returned.");
                 return null;
             }
 
-            return new Status(om.valueToTree(res.body().byteStream()));
+            return new Status(om.valueToTree(body.string()));
 
         } catch (Exception e) {
             LOG.info("while retrieving " + ip, e);
