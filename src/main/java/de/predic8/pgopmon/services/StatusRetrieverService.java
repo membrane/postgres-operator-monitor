@@ -24,11 +24,8 @@ public class StatusRetrieverService implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(StatusRetrieverService.class);
 
     final InfoCollector infoCollector;
-
     final MetricsService ms;
-
     final CountDownLatch cdl;
-
     final ObjectMapper om;
 
     private OkHttpClient httpClient;
@@ -43,74 +40,6 @@ public class StatusRetrieverService implements Runnable {
     @PostConstruct
     public void init() {
         httpClient = new OkHttpClient();
-    }
-
-    private static class Status {
-
-        private final boolean running;
-        private final boolean master;
-        private final Long timeline;
-        private final Long location;
-        private final Long serverVersion;
-        private final String patroniVersion;
-
-        public Status(boolean running, boolean master, Long timeline, Long location, Long serverVersion, String patroniVersion) {
-            this.running = running;
-            this.master = master;
-            this.timeline = timeline;
-            this.location = location;
-            this.serverVersion = serverVersion;
-            this.patroniVersion = patroniVersion;
-        }
-
-        /*
-        # master
-        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:14.145 UTC", "role": "master", "server_version": 120007, "cluster_unlocked": false, "xlog": {"location": 350002560888}, "timeline": 1, "replication": [{"usename": "standby", "application_name": "confluence-db-2", "client_addr": "172.17.103.21", "state": "streaming", "sync_state": "sync", "sync_priority": 1}, {"usename": "standby", "application_name": "confluence-db-1", "client_addr": "172.17.157.75", "state": "streaming", "sync_state": "async", "sync_priority": 0}], "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
-        # sync slave
-        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:18.241 UTC", "role": "replica", "server_version": 120007, "cluster_unlocked": false, "xlog": {"received_location": 350003107024, "replayed_location": 350003107024, "replayed_timestamp": "2021-07-04 18:53:27.672 UTC", "paused": false}, "timeline": 1, "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
-        # slave
-        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:19.545 UTC", "role": "replica", "server_version": 120007, "cluster_unlocked": false, "xlog": {"received_location": 350003107024, "replayed_location": 350003107024, "replayed_timestamp": "2021-07-04 18:53:27.672 UTC", "paused": false}, "timeline": 1, "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
-         */
-        public Status(JsonNode response) {
-            running = "running".equals(response.path("state").textValue());
-            master = "master".equals(response.path("role").textValue());
-            timeline = longValueOrNull(response.path("timeline"));
-            location = (master) ?
-                    longValueOrNull(response.path("xlog").path("location")) :
-                    longValueOrNull(response.path("xlog").path("replayed_location"));
-            serverVersion = longValueOrNull(response.path("server_version"));
-            patroniVersion = response.path("patroni").path("version").textValue();
-        }
-
-        public boolean isRunning() {
-            return running;
-        }
-
-        public boolean isMaster() {
-            return master;
-        }
-
-        public Long getTimeline() {
-            return timeline;
-        }
-
-        public Long getLocation() {
-            return location;
-        }
-
-        public Long getServerVersion() {
-            return serverVersion;
-        }
-
-        public String getPatroniVersion() {
-            return patroniVersion;
-        }
-
-        private static Long longValueOrNull(JsonNode n) {
-            if (n.isNumber())
-                return n.longValue();
-            return null;
-        }
     }
 
     @Override
@@ -155,7 +84,7 @@ public class StatusRetrieverService implements Runnable {
             List<Pair<String, String>> ips = infoCollector.getInstanceNumbersAndIPs(pg.getNamespace(), pg.getName());
 
             for (Pair<String, String> entry : ips) {
-                Status status = getStatus(entry.getRight());
+                PatroniStatus status = getStatus(entry.getRight());
                 boolean isMaster = status != null && status.isMaster();
                 DBIKey key2 = new DBIKey(pg.getNamespace(), pg.getName(), entry.getLeft(), isMaster);
 
@@ -193,9 +122,7 @@ public class StatusRetrieverService implements Runnable {
                         ms.patroniReplayedLocation.put(key2, status.getLocation());
                         updatedDBINonMasterKeys.add(key2);
                     }
-
             }
-
         }
 
         removeStaleKeys(updatedDBKeys, ms.patroniInstancesWanted.keySet());
@@ -209,7 +136,7 @@ public class StatusRetrieverService implements Runnable {
         ms.lastScan.set(System.currentTimeMillis());
     }
 
-    public Status getStatus(String ip) {
+    public PatroniStatus getStatus(String ip) {
         if (ip == null || ip.length() == 0)
             return null;
 
@@ -222,15 +149,13 @@ public class StatusRetrieverService implements Runnable {
                 return null;
             }
 
-//            LOG.info(res.toString());
             ResponseBody body = res.body();
             if (body == null || body.contentLength() == 0) {
                 LOG.info("while retrieving " + ip + " no body was returned.");
                 return null;
             }
 
-//            LOG.info(body.string());
-            return new Status(om.readTree(body.string()));
+            return new PatroniStatus(om.readTree(body.string()));
 
         } catch (Exception e) {
             LOG.info("while retrieving " + ip, e);
@@ -240,5 +165,64 @@ public class StatusRetrieverService implements Runnable {
 
     private <T> void removeStaleKeys(Set<T> updated, Set<T> setToRemoveFrom) {
         setToRemoveFrom.removeIf(t -> !updated.contains(t));
+    }
+
+    private static class PatroniStatus {
+
+        private final boolean running;
+        private final boolean master;
+        private final Long timeline;
+        private final Long location;
+        private final Long serverVersion;
+        private final String patroniVersion;
+
+        /*
+        # master
+        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:14.145 UTC", "role": "master", "server_version": 120007, "cluster_unlocked": false, "xlog": {"location": 350002560888}, "timeline": 1, "replication": [{"usename": "standby", "application_name": "confluence-db-2", "client_addr": "172.17.103.21", "state": "streaming", "sync_state": "sync", "sync_priority": 1}, {"usename": "standby", "application_name": "confluence-db-1", "client_addr": "172.17.157.75", "state": "streaming", "sync_state": "async", "sync_priority": 0}], "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
+        # sync slave
+        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:18.241 UTC", "role": "replica", "server_version": 120007, "cluster_unlocked": false, "xlog": {"received_location": 350003107024, "replayed_location": 350003107024, "replayed_timestamp": "2021-07-04 18:53:27.672 UTC", "paused": false}, "timeline": 1, "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
+        # slave
+        {"state": "running", "postmaster_start_time": "2021-07-04 18:52:19.545 UTC", "role": "replica", "server_version": 120007, "cluster_unlocked": false, "xlog": {"received_location": 350003107024, "replayed_location": 350003107024, "replayed_timestamp": "2021-07-04 18:53:27.672 UTC", "paused": false}, "timeline": 1, "database_system_identifier": "6981145906336170710", "patroni": {"version": "2.0.2", "scope": "confluence-db"}}
+         */
+        public PatroniStatus(JsonNode response) {
+            running = "running".equals(response.path("state").textValue());
+            master = "master".equals(response.path("role").textValue());
+            timeline = longValueOrNull(response.path("timeline"));
+            location = (master) ?
+                    longValueOrNull(response.path("xlog").path("location")) :
+                    longValueOrNull(response.path("xlog").path("replayed_location"));
+            serverVersion = longValueOrNull(response.path("server_version"));
+            patroniVersion = response.path("patroni").path("version").textValue();
+        }
+
+        public boolean isRunning() {
+            return running;
+        }
+
+        public boolean isMaster() {
+            return master;
+        }
+
+        public Long getTimeline() {
+            return timeline;
+        }
+
+        public Long getLocation() {
+            return location;
+        }
+
+        public Long getServerVersion() {
+            return serverVersion;
+        }
+
+        public String getPatroniVersion() {
+            return patroniVersion;
+        }
+
+        private static Long longValueOrNull(JsonNode n) {
+            if (n.isNumber())
+                return n.longValue();
+            return null;
+        }
     }
 }
