@@ -1,6 +1,6 @@
 # Monitoring Operator for Postgres Operator
 
-Collects Prometheus-compatible metrics from [Postgres Operator](https://github.com/zalando/postgres-operator)
+A tool to continuously collects metrics from [Postgres Operator](https://github.com/zalando/postgres-operator) and provide them to Prometheus with low latency
 
 ## Metrics
 pg-op-mon exposes these metrics:
