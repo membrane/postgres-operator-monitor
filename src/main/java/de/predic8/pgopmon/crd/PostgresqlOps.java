@@ -25,11 +25,8 @@ public class PostgresqlOps {
     }
 
     final KubernetesVersion kubernetesVersion;
-
     final KubeUtil kubeUtil;
-
     final ApiClient apiClient;
-
     final ApiClient slowApiClient;
 
     @PostConstruct
