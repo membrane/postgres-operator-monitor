@@ -167,7 +167,7 @@ public class StatusRetrieverService implements Runnable {
         setToRemoveFrom.removeIf(t -> !updated.contains(t));
     }
 
-    private static class PatroniStatus {
+    static class PatroniStatus {
 
         private final boolean running;
         private final boolean master;
