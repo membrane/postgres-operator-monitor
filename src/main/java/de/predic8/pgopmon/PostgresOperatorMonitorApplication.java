@@ -1,8 +1,8 @@
 package de.predic8.pgopmon;
 
+import de.predic8.kubernetesclient.client.NamespacedApiClient;
 import de.predic8.pgopmon.services.StatusRetrieverService;
 import de.predic8.pgopmon.services.Watcher;
-import de.predic8.kubernetesclient.client.NamespacedApiClient;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
@@ -84,7 +84,6 @@ public class PostgresOperatorMonitorApplication {
 					watcherThread.setName("watcher");
 					watcherThread.start();
 				}
-
 			}
 
 			private boolean needsToBeStarted(Thread t) {
@@ -95,6 +94,4 @@ public class PostgresOperatorMonitorApplication {
 		t.start();
 		return t;
 	}
-
-
 }
